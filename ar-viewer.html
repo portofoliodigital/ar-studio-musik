@@ -57,14 +57,16 @@
 </head>
 <body>
 
-    <!-- Komponen model-viewer -->
+    <!-- Komponen model-viewer dengan interaktivitas ditingkatkan -->
     <model-viewer
         src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/models/studio_musik_laskar_cinta.compressed.glb"  
-        ios-src="assets/models/studio_musik_laskar_cinta.usdz" 
+        ios-src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/models/studio_musik_laskar_cinta.usdz" 
         ar
-        ar-modes="scene-viewer webxr quick-look" <!-- Mode AR yang didukung -->
+        ar-modes="scene-viewer webxr quick-look"
+        ar-scale="auto"
         camera-controls
         auto-rotate
+        touch-action="pan-y"
         alt="Model AR Studio Musik 3D"
         loading="eager"
         reveal="auto">
@@ -77,8 +79,4 @@
     </model-viewer>
 
 </body>
-
 </html>
-
-
-

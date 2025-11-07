@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <!-- Meta tag ini SANGAT PENTING untuk tampilan mobile yang benar -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Viewer</title>
+    
+    <!-- Import library model-viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+    <style>
+        /* Pastikan model-viewer memenuhi seluruh layar */
+        model-viewer {
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #f0f2f5;
+        }
+        
+        /* Gaya untuk tombol AR */
+        .ar-button {
+            background-image: url(https://modelviewer.dev/assets/ic_view_in_ar_new_googblue_48dp.png);
+            background-repeat: no-repeat;
+            background-size: 20px 20px;
+            background-position: 12px 50%;
+            background-color: #fff;
+            color: #1a73e8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            height: 36px;
+            padding: 0 16px 0 40px;
+            border: 1px solid #dadce0;
+            border-radius: 18px;
+            cursor: pointer;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        
+        /* Gaya untuk pesan loading/error */
+        .poster {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #555;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Komponen model-viewer -->
+    <model-viewer
+        src="assets\models\studio_musik_laskar_cinta.glb"  
+        ios-src="assets\models\studio_musik_laskar_cinta.usdz" 
+        ar
+        ar-modes="scene-viewer webxr quick-look" <!-- Mode AR yang didukung -->
+        camera-controls
+        auto-rotate
+        alt="Model AR Bebek 3D"
+        loading="eager"
+        reveal="auto">
+        
+        <!-- Tombol untuk memulai AR (akan muncul otomatis jika didukung) -->
+        <button slot="ar-button" class="ar-button">Lihat di Ruangan Saya</button>
+        
+        <!-- Pesan yang muncul saat model dimuat -->
+        <div class="poster">Memuat model...</div>
+    </model-viewer>
+
+</body>
+</html>

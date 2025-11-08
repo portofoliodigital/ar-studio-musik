@@ -38,31 +38,95 @@
             height: 256px;
             border: 1px solid #ddd;
             border-radius: 8px;
+            margin: 20px auto;
+            display: block;
         }
         .note {
             margin-top: 20px;
             font-size: 0.9em;
             color: #666;
         }
+        .steps {
+            text-align: left;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .steps h3 {
+            margin-top: 0;
+            color: #1a73e8;
+        }
+        .steps ol {
+            padding-left: 20px;
+        }
+        .steps li {
+            margin-bottom: 8px;
+        }
+        .device-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .device {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        .device-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .device-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Selamat Datang di Pengalaman AR</h1>
+        <h1>Selamat Datang di Pengalaman AR Studio Musik</h1>
         <p>
-            Untuk melihat model 3D di dunia nyata, arahkan kamera ponsel Anda ke QR Code ini.
+            Untuk melihat model studio musik 3D di dunia nyata, arahkan kamera ponsel Anda ke QR Code ini.
         </p>
         
-        <!-- GANTI 'URL_WEBSITE_ANDA' dengan URL tempat Anda meng-hosting file ini -->
+        <!-- Informasi perangkat yang didukung -->
+        <div class="device-info">
+            <div class="device">
+                <div class="device-icon">📱</div>
+                <div class="device-name">Android</div>
+            </div>
+            <div class="device">
+                <div class="device-icon">🍎</div>
+                <div class="device-name">iOS</div>
+            </div>
+        </div>
+        
+        <!-- QR Code dengan URL yang benar -->
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=https://portofoliodigital.github.io/ar-studio-musik/ar-viewer.html" alt="QR Code untuk AR" class="qr-code">
-
+        
+        <!-- Langkah-langkah penggunaan -->
+        <div class="steps">
+            <h3>Cara Menggunakan:</h3>
+            <ol>
+                <li>Buka aplikasi kamera di ponsel Anda</li>
+                <li>Arahkan kamera ke QR Code di atas</li>
+                <li>Tautan akan muncul di layar, ketuk untuk membuka</li>
+                <li>Di halaman berikutnya, tekan tombol "Lihat di Ruangan Saya"</li>
+                <li>Arahkan kamera ke lantai dan ketuk untuk menempatkan model</li>
+            </ol>
+        </div>
+        
         <p class="note">
-            Pastikan ponsel Anda terhubung ke internet dan memiliki kamera yang berfungsi.
+            Pastikan ponsel Anda terhubung ke internet dan memiliki kamera yang berfungsi.<br>
+            Untuk pengalaman terbaik, gunakan ruangan dengan pencahayaan yang baik.
         </p>
     </div>
 
 </body>
-
 </html>
-

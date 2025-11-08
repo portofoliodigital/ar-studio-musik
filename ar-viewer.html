@@ -2,134 +2,102 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <!-- Meta tag ini SANGAT PENTING untuk tampilan mobile yang benar -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>AR Studio Musik</title>
     
     <!-- Import library model-viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
     <style>
-        /* Menghilangkan margin dan padding default */
+        /* Reset dasar untuk tampilan penuh */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Mencegah scroll */
+            overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-user-select: none; /* Mencegah seleksi teks di iOS */
+            user-select: none;
         }
 
-        /* Container utama yang memenuhi seluruh layar */
-        .ar-container {
+        /* Container utama yang memenuhi layar */
+        .ar-launcher {
             position: relative;
             width: 100vw;
             height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000; /* Latar belakang hitam untuk fokus */
         }
 
-        /* Model viewer memenuhi container */
+        /* Model viewer tersembunyi di belakang overlay */
         model-viewer {
+            position: absolute;
             width: 100%;
             height: 100%;
-            background-color: #f0f2f5; /* Warna latar sebelum model muncul */
+            top: 0;
+            left: 0;
         }
-        
-        /* Overlay untuk instruksi awal */
-        .instruction-overlay {
+
+        /* Overlay yang menutupi seluruh layar, bertindak sebagai tombol */
+        .start-ar-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: white;
             text-align: center;
             z-index: 10;
-            transition: opacity 0.5s ease-out;
+            cursor: pointer;
+            transition: opacity 0.4s ease-out;
         }
 
-        .instruction-overlay h2 {
-            font-size: 1.8em;
-            margin-bottom: 20px;
+        .start-ar-overlay p {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        .instruction-overlay p {
-            font-size: 1.1em;
-            max-width: 80%;
-            line-height: 1.5;
+        .start-ar-overlay .sub-text {
+            font-size: 1em;
+            font-weight: normal;
+            margin-top: 10px;
+            opacity: 0.8;
         }
 
         /* Ikon animasi untuk menarik perhatian */
-        .tap-icon {
-            width: 60px;
-            height: 60px;
+        .ar-icon {
+            width: 80px;
+            height: 80px;
             margin-bottom: 30px;
-            animation: pulse 2s infinite;
+            animation: float 3s ease-in-out infinite;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Tombol AR yang sangat besar dan jelas */
-        .ar-button {
-            /* Menggunakan slot='ar-button' akan membuat tombol ini berfungsi sebagai pemicu AR */
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 5; /* Pastikan tombol ada di atas model */
-
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.4);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .ar-button:hover {
-            background-color: #155ab6;
-            transform: translateX(-50%) translateY(-2px);
-            box-shadow: 0 6px 20px rgba(26, 115, 232, 0.5);
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
         
-        /* Ikon di dalam tombol */
-        .ar-button::before {
-            content: '📱';
-            font-size: 1.2em;
-        }
-        
-        /* Pesan loading/error */
+        /* Pesan loading/error (jarang terlihat karena overlay) */
         .poster {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #555;
-            text-align: center;
-            z-index: 2;
+            display: none; /* Sembunyikan, kita tidak memerlukannya */
         }
     </style>
 </head>
 <body>
 
-    <div class="ar-container">
-        <!-- Komponen model-viewer -->
+    <div class="ar-launcher">
+        <!-- Komponen model-viewer, siap di belakang layar -->
         <model-viewer
             id="ar-model"
             src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/models/studio_musik_laskar_cinta.compressed.glb"  
@@ -139,63 +107,53 @@
             ar-scale="auto"
             camera-controls
             auto-rotate
-            rotation-per-second="20deg"
             alt="Model AR Studio Musik 3D"
             loading="eager"
             reveal="auto"
-            environment-image="neutral"
             shadow-intensity="1"
-            min-camera-orbit="auto auto 1m"
-            max-camera-orbit="auto auto 5m">
+            environment-image="neutral">
             
-            <!-- Tombol AR yang akan memicu mode AR -->
-            <button slot="ar-button" class="ar-button">Lihat di Ruangan Saya</button>
+            <!-- Tombol AR disembunyikan, akan dipicu secara programatik -->
+            <button slot="ar-button" id="hidden-ar-button" style="display: none;"></button>
             
-            <!-- Pesan loading -->
             <div class="poster" slot="poster">Memuat model...</div>
         </model-viewer>
 
-        <!-- Overlay instruksi yang akan muncul di awal -->
-        <div class="instruction-overlay" id="instruction-overlay">
-            <svg class="tap-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M10.5 8.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
-                <path d="M2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2zm.5 2a.5.5 0 1 1 0-1 .5.5 0 0 1 0 1zm9 2.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z"/>
+        <!-- Overlay yang bisa diklik untuk memulai AR -->
+        <div class="start-ar-overlay" id="start-ar-overlay">
+            <!-- Ikon AR (bisa diganti dengan gambar sendiri) -->
+            <svg class="ar-icon" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 16 16">
+                <path d="M8.186 1.113a.5.5 0 0 1 .372.0L8 2.326l.186-.213a.5.5 0 0 1 .372 0zM8 2.726l4.918 5.653a.5.5 0 0 1-.093.703L8.5 11.5v2.5a.5.5 0 0 1-1 0v-2.5l-3.325-2.418a.5.5 0 0 1-.093-.703L8 2.726z"/>
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm0-1A7 7 0 1 1 8 1a7 7 0 0 1 0 14z"/>
             </svg>
-            <h2>Selamat Datang di Studio Musik AR</h2>
-            <p>
-                Siap untuk melihat studio musik muncul di ruangan Anda?<br>
-                Tekan tombol di bawah untuk memulai pengalaman Augmented Reality.
-            </p>
+            <p>KETUK LAYAR UNTUK MULAI</p>
+            <p class="sub-text">Lihat Studio Musik di Ruangan Anda</p>
         </div>
     </div>
 
     <script>
-        // Tunggu hingga model-viewer dan halaman selesai dimuat
         window.addEventListener('load', () => {
             const modelViewer = document.getElementById('ar-model');
-            const overlay = document.getElementById('instruction-overlay');
+            const overlay = document.getElementById('start-ar-overlay');
+            const hiddenButton = document.getElementById('hidden-ar-button');
 
-            // Sembunyikan overlay instruksi setelah model selesai dimuat
+            // Tunggu hingga model benar-benar siap
             modelViewer.addEventListener('load', () => {
-                // Beri jeda sedikit agar pengguna sempat membaca
-                setTimeout(() => {
-                    overlay.style.opacity = '0';
-                    // Hapus dari tampilan setelah animasi selesai
-                    setTimeout(() => {
-                        overlay.style.display = 'none';
-                    }, 500);
-                }, 3000); // Overlay muncul selama 3 detik
+                console.log("Model siap, menunggu interaksi pengguna.");
             });
 
-            // Jika pengguna berinteraksi dengan model (misalnya, mencoba memutar),
-            // sembunyikan overlay lebih cepat.
-            modelViewer.addEventListener('camera-change', () => {
-                if (overlay.style.display !== 'none') {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => {
-                        overlay.style.display = 'none';
-                    }, 300);
-                }
+            // Event listener untuk overlay yang bisa diklik
+            overlay.addEventListener('click', () => {
+                // Berikan efek visual bahwa ketukan diterima
+                overlay.style.opacity = '0';
+                
+                // Setelah animasi fade out, sembunyikan overlay dan picu tombol AR
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    // Secara programatik 'klik' tombol AR yang tersembunyi
+                    // Ini akan memulai proses AR (meminta izin, dll.)
+                    hiddenButton.click();
+                }, 400);
             });
         });
     </script>

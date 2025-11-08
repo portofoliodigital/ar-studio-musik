@@ -22,7 +22,7 @@
         }
 
         /* Container utama yang memenuhi layar */
-        .ar-launcher {
+        .ar-container {
             position: relative;
             width: 100vw;
             height: 100vh;
@@ -32,17 +32,92 @@
             background-color: #000; /* Latar belakang hitam untuk fokus */
         }
 
-        /* Model viewer tersembunyi di belakang overlay */
+        /* Video kamera di belakang */
+        #camera-view {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* Model viewer di atas kamera */
         model-viewer {
             position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
+            z-index: 2;
         }
 
-        /* Overlay yang menutupi seluruh layar, bertindak sebagai tombol */
-        .start-ar-overlay {
+        /* Overlay instruksi */
+        .instructions-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            text-align: center;
+            z-index: 3;
+            border-radius: 10px 10px 0 0;
+            box-sizing: border-box;
+        }
+
+        .instructions-overlay h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .instructions-overlay p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .instruction-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        /* Tombol tutup instruksi */
+        .close-instructions {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            z-index: 4;
+        }
+
+        /* Tombol bantuan */
+        .help-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            z-index: 4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Overlay loading */
+        .loading-overlay {
             position: absolute;
             top: 0;
             left: 0;
@@ -56,104 +131,153 @@
             align-items: center;
             text-align: center;
             z-index: 10;
-            cursor: pointer;
-            transition: opacity 0.4s ease-out;
         }
 
-        .start-ar-overlay p {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin: 0;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
         }
 
-        .start-ar-overlay .sub-text {
-            font-size: 1em;
-            font-weight: normal;
-            margin-top: 10px;
-            opacity: 0.8;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        /* Ikon animasi untuk menarik perhatian */
-        .ar-icon {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 30px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        /* Pesan loading/error (jarang terlihat karena overlay) */
-        .poster {
-            display: none; /* Sembunyikan, kita tidak memerlukannya */
+        /* Pesan error */
+        .error-message {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 5;
+            max-width: 80%;
         }
     </style>
 </head>
 <body>
 
-    <div class="ar-launcher">
-        <!-- Komponen model-viewer, siap di belakang layar -->
+    <div class="ar-container">
+        <!-- Video kamera di belakang -->
+        <video id="camera-view" autoplay playsinline></video>
+
+        <!-- Komponen model-viewer di atas kamera -->
         <model-viewer
             id="ar-model"
             src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/models/studio_musik_laskar_cinta.compressed.glb"  
-            ios-src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/models/studio_musik_laskar_cinta.usdz" 
-            ar
-            ar-modes="scene-viewer webxr quick-look"
-            ar-scale="auto"
             camera-controls
             auto-rotate
             alt="Model AR Studio Musik 3D"
             loading="eager"
             reveal="auto"
             shadow-intensity="1"
-            environment-image="neutral">
-            
-            <!-- Tombol AR disembunyikan, akan dipicu secara programatik -->
-            <button slot="ar-button" id="hidden-ar-button" style="display: none;"></button>
-            
-            <div class="poster" slot="poster">Memuat model...</div>
+            environment-image="neutral"
+            interaction-prompt="auto">
         </model-viewer>
 
-        <!-- Overlay yang bisa diklik untuk memulai AR -->
-        <div class="start-ar-overlay" id="start-ar-overlay">
-            <!-- Ikon AR (bisa diganti dengan gambar sendiri) -->
-            <svg class="ar-icon" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 16 16">
-                <path d="M8.186 1.113a.5.5 0 0 1 .372.0L8 2.326l.186-.213a.5.5 0 0 1 .372 0zM8 2.726l4.918 5.653a.5.5 0 0 1-.093.703L8.5 11.5v2.5a.5.5 0 0 1-1 0v-2.5l-3.325-2.418a.5.5 0 0 1-.093-.703L8 2.726z"/>
-                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm0-1A7 7 0 1 1 8 1a7 7 0 0 1 0 14z"/>
-            </svg>
-            <p>KETUK LAYAR UNTUK MULAI</p>
-            <p class="sub-text">Lihat Studio Musik di Ruangan Anda</p>
+        <!-- Tombol bantuan -->
+        <button class="help-button" id="help-button">?</button>
+
+        <!-- Overlay instruksi -->
+        <div class="instructions-overlay" id="instructions-overlay">
+            <button class="close-instructions" id="close-instructions">×</button>
+            <h3>Cara Berinteraksi dengan Model 3D</h3>
+            <p><span class="instruction-icon">👆</span> Sentuh & geser untuk memutar model</p>
+            <p><span class="instruction-icon">🤏</span> Cubit untuk zoom in/out</p>
+            <p><span class="instruction-icon">👋</span> Gunakan dua jari untuk memindahkan model</p>
+        </div>
+
+        <!-- Overlay loading -->
+        <div class="loading-overlay" id="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p>Memuat kamera dan model 3D...</p>
+        </div>
+
+        <!-- Pesan error -->
+        <div class="error-message" id="error-message">
+            <p>Tidak dapat mengakses kamera. Pastikan Anda telah memberikan izin kamera.</p>
         </div>
     </div>
 
     <script>
         window.addEventListener('load', () => {
             const modelViewer = document.getElementById('ar-model');
-            const overlay = document.getElementById('start-ar-overlay');
-            const hiddenButton = document.getElementById('hidden-ar-button');
+            const cameraView = document.getElementById('camera-view');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const errorMessage = document.getElementById('error-message');
+            const instructionsOverlay = document.getElementById('instructions-overlay');
+            const helpButton = document.getElementById('help-button');
+            const closeInstructions = document.getElementById('close-instructions');
 
-            // Tunggu hingga model benar-benar siap
-            modelViewer.addEventListener('load', () => {
-                console.log("Model siap, menunggu interaksi pengguna.");
+            // Fungsi untuk mengakses kamera
+            async function startCamera() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { 
+                            facingMode: 'environment',
+                            width: { ideal: 1920 },
+                            height: { ideal: 1080 }
+                        } 
+                    });
+                    cameraView.srcObject = stream;
+                    
+                    // Sembunyikan overlay loading setelah kamera aktif
+                    setTimeout(() => {
+                        loadingOverlay.style.display = 'none';
+                        // Tampilkan instruksi setelah 2 detik
+                        setTimeout(() => {
+                            instructionsOverlay.style.display = 'block';
+                            // Sembunyikan instruksi otomatis setelah 5 detik
+                            setTimeout(() => {
+                                instructionsOverlay.style.display = 'none';
+                            }, 5000);
+                        }, 2000);
+                    }, 1000);
+                } catch (err) {
+                    console.error('Error accessing camera:', err);
+                    loadingOverlay.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                    
+                    // Sembunyikan pesan error setelah 3 detik
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                    }, 3000);
+                }
+            }
+
+            // Event listener untuk tombol bantuan
+            helpButton.addEventListener('click', () => {
+                instructionsOverlay.style.display = 'block';
             });
 
-            // Event listener untuk overlay yang bisa diklik
-            overlay.addEventListener('click', () => {
-                // Berikan efek visual bahwa ketukan diterima
-                overlay.style.opacity = '0';
-                
-                // Setelah animasi fade out, sembunyikan overlay dan picu tombol AR
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                    // Secara programatik 'klik' tombol AR yang tersembunyi
-                    // Ini akan memulai proses AR (meminta izin, dll.)
-                    hiddenButton.click();
-                }, 400);
+            // Event listener untuk tombol tutup instruksi
+            closeInstructions.addEventListener('click', () => {
+                instructionsOverlay.style.display = 'none';
+            });
+
+            // Tunggu hingga model siap
+            modelViewer.addEventListener('load', () => {
+                console.log("Model siap.");
+            });
+
+            // Mulai kamera saat halaman dimuat
+            startCamera();
+
+            // Membersihkan stream saat halaman ditutup
+            window.addEventListener('beforeunload', () => {
+                if (cameraView.srcObject) {
+                    const tracks = cameraView.srcObject.getTracks();
+                    tracks.forEach(track => track.stop());
+                }
             });
         });
     </script>

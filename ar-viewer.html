@@ -17,7 +17,7 @@
             height: 100%;
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            -webkit-user-select: none;
+            -webkit-user-select: none; /* Mencegah seleksi teks di iOS */
             user-select: none;
         }
 
@@ -48,7 +48,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.85);
             color: white;
             display: flex;
             flex-direction: column;
@@ -60,8 +60,8 @@
             transition: opacity 0.4s ease-out;
         }
 
-        .start-ar-overlay h2 {
-            font-size: 1.8em;
+        .start-ar-overlay p {
+            font-size: 1.5em;
             font-weight: bold;
             margin: 0;
             text-shadow: 0 2px 5px rgba(0,0,0,0.5);
@@ -70,16 +70,11 @@
         .start-ar-overlay .sub-text {
             font-size: 1em;
             font-weight: normal;
-            margin-top: 15px;
+            margin-top: 10px;
             opacity: 0.8;
         }
-        
-        /* Pesan error khusus */
-        .error-message {
-            color: #ff6b6b;
-        }
 
-        /* Ikon animasi */
+        /* Ikon animasi untuk menarik perhatian */
         .ar-icon {
             width: 80px;
             height: 80px;
@@ -93,9 +88,9 @@
             100% { transform: translateY(0px); }
         }
         
-        /* Sembunyikan poster default */
+        /* Pesan loading/error (jarang terlihat karena overlay) */
         .poster {
-            display: none;
+            display: none; /* Sembunyikan, kita tidak memerlukannya */
         }
     </style>
 </head>
@@ -117,16 +112,22 @@
             reveal="auto"
             shadow-intensity="1"
             environment-image="neutral">
+            
+            <!-- Tombol AR disembunyikan, akan dipicu secara programatik -->
+            <button slot="ar-button" id="hidden-ar-button" style="display: none;"></button>
+            
+            <div class="poster" slot="poster">Memuat model...</div>
         </model-viewer>
 
-        <!-- Overlay yang bisa diklik untuk memulai AR atau menampilkan error -->
+        <!-- Overlay yang bisa diklik untuk memulai AR -->
         <div class="start-ar-overlay" id="start-ar-overlay">
+            <!-- Ikon AR (bisa diganti dengan gambar sendiri) -->
             <svg class="ar-icon" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 16 16">
                 <path d="M8.186 1.113a.5.5 0 0 1 .372.0L8 2.326l.186-.213a.5.5 0 0 1 .372 0zM8 2.726l4.918 5.653a.5.5 0 0 1-.093.703L8.5 11.5v2.5a.5.5 0 0 1-1 0v-2.5l-3.325-2.418a.5.5 0 0 1-.093-.703L8 2.726z"/>
                 <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm0-1A7 7 0 1 1 8 1a7 7 0 0 1 0 14z"/>
             </svg>
-            <h2 id="overlay-title">KETUK UNTUK MULAI AR</h2>
-            <p class="sub-text" id="overlay-subtext">Lihat Studio Musik di Ruangan Anda</p>
+            <p>KETUK LAYAR UNTUK MULAI</p>
+            <p class="sub-text">Lihat Studio Musik di Ruangan Anda</p>
         </div>
     </div>
 
@@ -134,54 +135,25 @@
         window.addEventListener('load', () => {
             const modelViewer = document.getElementById('ar-model');
             const overlay = document.getElementById('start-ar-overlay');
-            const titleEl = document.getElementById('overlay-title');
-            const subtextEl = document.getElementById('overlay-subtext');
+            const hiddenButton = document.getElementById('hidden-ar-button');
 
-            // Fungsi untuk menangani kesalahan
-            const showError = (title, subtext) => {
-                titleEl.innerText = title;
-                subtextEl.innerText = subtext;
-                overlay.classList.add('error-message');
-                overlay.style.cursor = 'default'; // Tidak bisa diklik lagi
-            };
-
-            // Periksa apakah AR didukung oleh browser/perangkat
-            if (!modelViewer.canActivateAR) {
-                showError("AR Tidak Didukung", "Perangkat atau browser Anda tidak mendukung AR. Gunakan Chrome di Android atau Safari di iOS.");
-                console.error("AR is not supported on this device.");
-                return; // Hentikan eksekusi lebih lanjut
-            }
-
-            // Tunggu hingga model dimuat sepenuhnya
+            // Tunggu hingga model benar-benar siap
             modelViewer.addEventListener('load', () => {
-                console.log("Model siap. Menunggu ketukan untuk memulai AR.");
-                
-                // Tambahkan event listener untuk memulai AR
-                overlay.addEventListener('click', async () => {
-                    // Berikan umpan balik visual
-                    titleEl.innerText = "MEMULAI SESI AR...";
-                    subtextEl.innerText = "Mohon tunggu, kamera akan segera aktif.";
-                    overlay.style.cursor = 'wait'; // Ubah cursor menjadi loading
-
-                    try {
-                        // === INI ADALAH BAGIAN KRUSIAL ===
-                        // Secara langsung memanggil fungsi enterAR() dari model-viewer
-                        await modelViewer.enterAR();
-                        
-                        // Jika berhasil, overlay akan hilang saat sesi AR dimulai
-                        console.log("AR session started successfully.");
-                    } catch (error) {
-                        console.error("Gagal memulai sesi AR:", error);
-                        // Tampilkan pesan error yang jelas kepada pengguna
-                        showError("Gagal Memulai AR", "Pastikan Anda memberikan izin kamera dan mencoba di area yang cukup terang.");
-                    }
-                });
+                console.log("Model siap, menunggu interaksi pengguna.");
             });
 
-            // Tangani jika model gagal dimuat
-            modelViewer.addEventListener('error', (event) => {
-                console.error("Model failed to load:", event.detail);
-                showError("Gagal Memuat Model", "Tidak dapat memuat model 3D. Periksa koneksi internet Anda.");
+            // Event listener untuk overlay yang bisa diklik
+            overlay.addEventListener('click', () => {
+                // Berikan efek visual bahwa ketukan diterima
+                overlay.style.opacity = '0';
+                
+                // Setelah animasi fade out, sembunyikan overlay dan picu tombol AR
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    // Secara programatik 'klik' tombol AR yang tersembunyi
+                    // Ini akan memulai proses AR (meminta izin, dll.)
+                    hiddenButton.click();
+                }, 400);
             });
         });
     </script>

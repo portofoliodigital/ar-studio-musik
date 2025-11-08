@@ -2,15 +2,20 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <!-- Meta tag ini SANGAT PENTING untuk tampilan mobile yang benar -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Viewer</title>
+    <title>AR Studio Musik Laskar Cinta</title>
     
     <!-- Import library model-viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
     <style>
         /* Pastikan model-viewer memenuhi seluruh layar */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
         model-viewer {
             width: 100%;
             height: 100vh;
@@ -41,6 +46,51 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        
+        .ar-button:hover {
+            background-color: #f8f9fa;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Gaya untuk instruksi */
+        .instructions {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+            max-width: 80%;
+            text-align: center;
+        }
+        
+        .instructions h3 {
+            margin: 0 0 10px 0;
+            color: #1a73e8;
+            font-size: 18px;
+        }
+        
+        .instructions p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .close-instructions {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
         }
         
         /* Gaya untuk pesan loading/error */
@@ -52,13 +102,48 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #555;
             text-align: center;
+            z-index: 5;
+        }
+        
+        /* Progress bar */
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.3);
+            z-index: 10;
+        }
+        
+        .progress-bar .update {
+            height: 100%;
+            background-color: #1a73e8;
+            width: 0%;
+        }
+        
+        /* Info panel */
+        .info-panel {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+            font-size: 14px;
+            color: #333;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <!-- Komponen model-viewer dengan interaktivitas ditingkatkan -->
+    <!-- Komponen model-viewer dengan konfigurasi AR yang ditingkatkan -->
     <model-viewer
+        id="ar-model"
         src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/models/studio_musik_laskar_cinta.compressed.glb"  
         ios-src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/models/studio_musik_laskar_cinta.usdz" 
         ar
@@ -66,18 +151,84 @@
         ar-scale="auto"
         camera-controls
         auto-rotate
+        rotation-per-second="30deg"
         touch-action="pan-y"
         alt="Model AR Studio Musik 3D"
         loading="eager"
-        reveal="auto">
+        reveal="auto"
+        environment-image="neutral"
+        shadow-intensity="1"
+        camera-orbit="45deg 45deg 2.5m"
+        min-camera-orbit="auto auto 0.5m"
+        max-camera-orbit="auto auto 5m">
         
-        <!-- Tombol untuk memulai AR (akan muncul otomatis jika didukung) -->
+        <!-- Progress bar -->
+        <div class="progress-bar" slot="progress-bar">
+            <div class="update"></div>
+        </div>
+        
+        <!-- Tombol untuk memulai AR -->
         <button slot="ar-button" class="ar-button">Lihat di Ruangan Saya</button>
         
         <!-- Pesan yang muncul saat model dimuat -->
-        <div class="poster"></div>
+        <div class="poster" slot="poster">
+            <p>Memuat model studio musik...</p>
+        </div>
     </model-viewer>
+    
+    <!-- Panel instruksi -->
+    <div class="instructions" id="instructions">
+        <button class="close-instructions" id="close-instructions">&times;</button>
+        <h3>Cara Menggunakan AR Studio Musik</h3>
+        <p><strong>1.</strong> Tekan tombol "Lihat di Ruangan Saya" untuk memulai AR</p>
+        <p><strong>2.</strong> Arahkan kamera ke lantai atau permukaan datar</p>
+        <p><strong>3.</strong> Ketuk untuk menempatkan model studio musik</p>
+        <p><strong>4.</strong> Gunakan jari untuk:</p>
+        <p>• <strong>Satu jari:</strong> Putar model</p>
+        <p>• <strong>Dua jari:</strong> Perbesar/Perkecil model</p>
+        <p>• <strong>Satu jari tahan:</strong> Pindahkan model</p>
+    </div>
+    
+    <!-- Info panel untuk mode AR -->
+    <div class="info-panel" id="info-panel">
+        Ketuk di permukaan untuk menempatkan model
+    </div>
 
+    <script>
+        // Event listeners untuk instruksi
+        document.getElementById('close-instructions').addEventListener('click', function() {
+            document.getElementById('instructions').style.display = 'none';
+        });
+        
+        // Auto-hide instructions after 10 seconds
+        setTimeout(function() {
+            document.getElementById('instructions').style.display = 'none';
+        }, 10000);
+        
+        // Model viewer event listeners
+        const modelViewer = document.getElementById('ar-model');
+        
+        // Show info panel when AR mode is starting
+        modelViewer.addEventListener('ar-status', (event) => {
+            const { status } = event.detail;
+            
+            if (status === 'session-started') {
+                document.getElementById('info-panel').style.display = 'block';
+                document.getElementById('instructions').style.display = 'none';
+                
+                // Hide info panel after 5 seconds
+                setTimeout(function() {
+                    document.getElementById('info-panel').style.display = 'none';
+                }, 5000);
+            }
+        });
+        
+        // Handle loading errors
+        modelViewer.addEventListener('error', (event) => {
+            console.error('Model loading error:', event.detail);
+            const poster = document.querySelector('.poster');
+            poster.innerHTML = '<p>Terjadi kesalahan saat memuat model. Silakan coba lagi nanti.</p>';
+        });
+    </script>
 </body>
 </html>
-

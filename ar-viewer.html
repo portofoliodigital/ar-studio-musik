@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AR Studio Musik</title>
+    <title>AR Studio Musik Interaktif</title>
     
     <!-- Import library model-viewer -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
@@ -49,6 +49,243 @@
             top: 0;
             left: 0;
             z-index: 2;
+        }
+
+        /* Environment untuk Life to AR */
+        .ar-environment {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: none;
+        }
+
+        .ar-environment.active {
+            display: block;
+        }
+
+        /* Container untuk tombol instrumen */
+        .instruments-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 4;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 200px;
+        }
+
+        /* Tombol instrumen individual */
+        .instrument-button {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(102, 126, 234, 0.8);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            min-width: 140px;
+        }
+
+        .instrument-button:hover {
+            background: rgba(102, 126, 234, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .instrument-button:active {
+            transform: translateY(0);
+        }
+
+        .instrument-button.playing {
+            animation: instrumentPulse 0.6s ease;
+            background: rgba(102, 126, 234, 1);
+        }
+
+        @keyframes instrumentPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .instrument-icon {
+            font-size: 20px;
+            margin-right: 10px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .instrument-name {
+            flex: 1;
+            text-align: left;
+        }
+
+        /* Panel kontrol musik */
+        .music-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 40px;
+            padding: 10px 20px;
+            z-index: 4;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 12px;
+        }
+
+        /* Tombol musik */
+        .music-button {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .music-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .music-button:active {
+            transform: scale(0.95);
+        }
+
+        .music-button.playing {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
+        }
+
+        .music-title {
+            color: white;
+            font-size: 14px;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Visualizer musik */
+        .music-visualizer {
+            display: flex;
+            align-items: flex-end;
+            height: 25px;
+        }
+
+        .bar {
+            width: 3px;
+            height: 5px;
+            margin: 0 1.5px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 2px;
+            transition: height 0.3s ease;
+        }
+
+        .bar:nth-child(1) { animation: dance 0.8s infinite alternate; }
+        .bar:nth-child(2) { animation: dance 0.6s infinite alternate; }
+        .bar:nth-child(3) { animation: dance 0.7s infinite alternate; }
+        .bar:nth-child(4) { animation: dance 0.5s infinite alternate; }
+        .bar:nth-child(5) { animation: dance 0.9s infinite alternate; }
+
+        @keyframes dance {
+            0% { height: 5px; }
+            100% { height: 25px; }
+        }
+
+        .music-visualizer.hidden {
+            display: none;
+        }
+
+        /* Tombol Pilih Musik */
+        .choose-music-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 18px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .choose-music-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Input file tersembunyi */
+        #music-file-input {
+            display: none;
+        }
+
+        /* Tombol Layar Penuh */
+        .fullscreen-button {
+            position: absolute;
+            bottom: 30px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            z-index: 4;
+        }
+
+        .fullscreen-button:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.05);
+        }
+
+        .fullscreen-button:active {
+            transform: scale(0.95);
         }
 
         /* Overlay instruksi */
@@ -103,8 +340,8 @@
         /* Tombol tutup instruksi */
         .close-instructions {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 80px;
+            left: 20px;
             background: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 50%;
@@ -138,130 +375,6 @@
             align-items: center;
         }
 
-        /* Tombol kontrol musik - DIUBAH */
-        .music-controls {
-            position: absolute;
-            bottom: 70px; /* Diubah dari 30px */
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 40px;
-            padding: 10px 20px;
-            z-index: 4;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Tombol musik - DIUBAH */
-        .music-button {
-            width: 45px; /* Diperkecil dari 60px */
-            height: 45px; /* Diperkecil dari 60px */
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            color: white;
-            font-size: 18px; /* Diperkecil dari 24px */
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .music-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .music-button:active {
-            transform: scale(0.95);
-        }
-
-        .music-button.playing {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
-            }
-        }
-
-        /* Judul musik - DIUBAH */
-        .music-title {
-            color: white;
-            margin-left: 12px; /* Diperkecil dari 15px */
-            font-size: 14px; /* Diperkecil dari 16px */
-            max-width: 150px; /* Diperkecil dari 200px */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Visualizer musik - DIUBAH */
-        .music-visualizer {
-            display: flex;
-            align-items: flex-end;
-            height: 25px; /* Diperkecil dari 30px */
-            margin-left: 12px; /* Diperkecil dari 15px */
-        }
-
-        .bar {
-            width: 3px; /* Diperkecil dari 4px */
-            height: 5px;
-            margin: 0 1.5px; /* Diperkecil dari 0 2px */
-            background: linear-gradient(to top, #667eea, #764ba2);
-            border-radius: 2px;
-            transition: height 0.3s ease;
-        }
-
-        .bar:nth-child(1) { animation: dance 0.8s infinite alternate; }
-        .bar:nth-child(2) { animation: dance 0.6s infinite alternate; }
-        .bar:nth-child(3) { animation: dance 0.7s infinite alternate; }
-        .bar:nth-child(4) { animation: dance 0.5s infinite alternate; }
-        .bar:nth-child(5) { animation: dance 0.9s infinite alternate; }
-
-        @keyframes dance {
-            0% { height: 5px; }
-            100% { height: 25px; } /* Diperkecil dari 30px */
-        }
-
-        .music-visualizer.hidden {
-            display: none;
-        }
-
-        /* Tombol Pilih Musik - DIUBAH */
-        .choose-music-button {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 6px 12px; /* Diperkecil dari 8px 15px */
-            border-radius: 18px; /* Diperkecil dari 20px */
-            font-size: 12px; /* Diperkecil dari 14px */
-            cursor: pointer;
-            margin-left: 12px; /* Diperkecil dari 15px */
-            transition: all 0.3s ease;
-        }
-
-        .choose-music-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        #music-file-input {
-            display: none;
-        }
-
         /* Overlay loading */
         .loading-overlay {
             position: absolute;
@@ -286,6 +399,11 @@
             border-radius: 50%;
             border-top-color: white;
             margin-bottom: 25px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         /* Pesan error */
@@ -305,69 +423,286 @@
             font-size: 1.1rem;
         }
 
-        /* Media query untuk layar yang lebih kecil - DIUBAH */
-        @media (max-height: 600px) {
-            .instructions-overlay h3 {
-                font-size: 1.5rem;
-                margin-bottom: 20px;
-            }
-            
-            .instructions-overlay p {
-                font-size: 1rem;
-                margin: 15px 0;
-            }
-            
-            .instruction-icon {
-                width: 30px;
-                height: 30px;
-                font-size: 1.5rem;
-                margin-right: 10px;
-            }
-            
-            .music-controls {
-                bottom: 40px;
-                padding: 8px 16px; /* Diperkecil dari 10px 15px */
-            }
-            
-            .music-button {
-                width: 40px; /* Diperkecil dari 50px */
-                height: 40px; /* Diperkecil dari 50px */
-                font-size: 16px; /* Diperkecil dari 20px */
-            }
-            
-            .music-title {
-                font-size: 12px; /* Diperkecil dari 14px */
-                max-width: 120px; /* Diperkecil dari 150px */
+        /* Audio container tersembunyi */
+        .audio-container {
+            display: none;
+        }
+
+        /* Panel Mode AR */
+        .ar-mode-panel {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 4;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 10px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ar-mode-button {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ar-mode-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .ar-mode-button.active {
+            background: rgba(102, 126, 234, 0.8);
+            border-color: rgba(102, 126, 234, 0.8);
+        }
+
+        /* RESPONSIVE DESIGN */
+
+        /* Tablet */
+        @media (max-width: 768px) {
+            .instruments-panel {
+                top: 15px;
+                right: 15px;
+                padding: 12px;
+                max-width: 180px;
             }
 
-            .choose-music-button {
-                margin-left: 0;
-                margin-top: 5px;
-                padding: 5px 10px; /* Diperkecil dari 8px 15px */
-                font-size: 11px; /* Diperkecil dari 14px */
+            .instrument-button {
+                padding: 10px 14px;
+                font-size: 13px;
+                min-width: 120px;
             }
-            
-            .music-visualizer {
-                height: 20px; /* Diperkecil dari 25px */
-                margin-left: 10px; /* Diperkecil dari 12px */
+
+            .instrument-icon {
+                font-size: 18px;
+                margin-right: 8px;
+                width: 20px;
             }
-            
-            .bar {
-                width: 2px; /* Diperkecil dari 3px */
-                margin: 0 1px; /* Diperkecil dari 0 1.5px */
+
+            .music-controls {
+                bottom: 20px;
+                padding: 8px 16px;
+                gap: 10px;
             }
-            
-            @keyframes dance {
-                0% { height: 5px; }
-                100% { height: 20px; } /* Diperkecil dari 25px */
+
+            .music-button {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .music-title {
+                font-size: 12px;
+                max-width: 120px;
+            }
+
+            .fullscreen-button {
+                bottom: 20px;
+                right: 15px;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .ar-mode-panel {
+                top: 15px;
+                padding: 8px 12px;
+            }
+
+            .ar-mode-button {
+                padding: 6px 12px;
+                font-size: 12px;
             }
         }
 
-        /* Untuk layar yang ekstrem pendek */
-        @media (max-height: 400px) {
+        /* Mobile Landscape */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .instruments-panel {
+                top: 10px;
+                right: 10px;
+                padding: 8px;
+                max-width: 160px;
+                gap: 8px;
+            }
+
+            .instrument-button {
+                padding: 8px 10px;
+                font-size: 12px;
+                min-width: 110px;
+            }
+
+            .instrument-icon {
+                font-size: 16px;
+                margin-right: 6px;
+                width: 18px;
+            }
+
             .music-controls {
-                bottom: 40px;
+                bottom: 15px;
                 padding: 6px 12px;
+                gap: 8px;
+            }
+
+            .music-button {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+
+            .music-title {
+                font-size: 11px;
+                max-width: 100px;
+            }
+
+            .choose-music-button {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            .fullscreen-button {
+                bottom: 15px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+
+            .ar-mode-panel {
+                top: 10px;
+                padding: 6px 10px;
+            }
+
+            .ar-mode-button {
+                padding: 5px 10px;
+                font-size: 11px;
+            }
+        }
+
+        /* Mobile Portrait */
+        @media (max-width: 480px) {
+            .instruments-panel {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                padding: 10px;
+            }
+
+            .instrument-button {
+                flex: 1;
+                min-width: 0;
+                max-width: 120px;
+                padding: 8px 10px;
+                font-size: 12px;
+                justify-content: center;
+            }
+
+            .instrument-icon {
+                margin-right: 5px;
+                font-size: 16px;
+            }
+
+            .music-controls {
+                bottom: 15px;
+                padding: 8px 12px;
+                gap: 8px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .music-title {
+                order: 3;
+                flex-basis: 100%;
+                text-align: center;
+                margin-top: 5px;
+                max-width: none;
+            }
+
+            .music-visualizer {
+                order: 2;
+            }
+
+            .choose-music-button {
+                order: 4;
+                margin-top: 5px;
+            }
+
+            .fullscreen-button {
+                bottom: 15px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+
+            .ar-mode-panel {
+                top: 10px;
+                padding: 8px 10px;
+            }
+
+            .ar-mode-button {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+        }
+
+        /* Layar sangat kecil */
+        @media (max-width: 320px) {
+            .instruments-panel {
+                padding: 8px;
+                gap: 6px;
+            }
+
+            .instrument-button {
+                padding: 6px 8px;
+                font-size: 11px;
+                max-width: 100px;
+            }
+
+            .instrument-icon {
+                font-size: 14px;
+                margin-right: 4px;
+            }
+
+            .music-controls {
+                padding: 6px 10px;
+            }
+
+            .music-button {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .fullscreen-button {
+                bottom: 15px;
+                right: 10px;
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .ar-mode-panel {
+                padding: 6px 8px;
+            }
+
+            .ar-mode-button {
+                padding: 4px 8px;
+                font-size: 10px;
             }
         }
 
@@ -388,33 +723,63 @@
         <!-- Video kamera di belakang -->
         <video id="camera-view" autoplay playsinline></video>
 
+        <!-- Environment untuk Life to AR -->
+        <div class="ar-environment" id="ar-environment"></div>
+
         <!-- Komponen model-viewer di atas kamera -->
         <model-viewer
             id="ar-model"
             src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/compressed_studio_musik.glb"  
             camera-controls
-            auto-rotate
-            alt="Model AR Studio Musik 3D"
-            loading="eager"
-            reveal="auto"
+            disable-pan
+            disable-tap
             shadow-intensity="1"
-            environment-image="neutral"
-            interaction-prompt="auto">
+            exposure="1"
+        >
         </model-viewer>
+
+        <!-- Panel Mode AR -->
+        <div class="ar-mode-panel">
+            <button class="ar-mode-button active" id="ar-to-life-button">AR to Life</button>
+            <button class="ar-mode-button" id="life-to-ar-button">Life to AR</button>
+        </div>
+
+        <!-- Panel tombol instrumen -->
+        <div class="instruments-panel">
+            <button class="instrument-button" data-sound="drum">
+                <span class="instrument-icon">🥁</span>
+                <span class="instrument-name">Drum</span>
+            </button>
+            <button class="instrument-button" data-sound="piano">
+                <span class="instrument-icon">🎹</span>
+                <span class="instrument-name">Piano</span>
+            </button>
+            <button class="instrument-button" data-sound="guitar">
+                <span class="instrument-icon">🎸</span>
+                <span class="instrument-name">Gitar</span>
+            </button>
+        </div>
 
         <!-- Tombol bantuan -->
         <button class="help-button" id="help-button">?</button>
 
+        <!-- Tombol Layar Penuh -->
+        <button class="fullscreen-button" id="fullscreen-button">
+            <span id="fullscreen-icon">⛶</span>
+        </button>
+
         <!-- Overlay instruksi -->
         <div class="instructions-overlay hidden" id="instructions-overlay">
             <button class="close-instructions" id="close-instructions">×</button>
-            <h3>Cara Berinteraksi dengan Model 3D</h3>
+            <h3>Cara Berinteraksi dengan Studio Musik AR</h3>
             <div class="instructions-container">
-                <p><span class="instruction-icon">👆</span> Sentuh & geser untuk memutar model</p>
+                <p><span class="instruction-icon">👆</span> Sentuh & geser untuk memutar studio</p>
                 <p><span class="instruction-icon">🤏</span> Cubit untuk zoom in/out</p>
-                <p><span class="instruction-icon">👋</span> Gunakan dua jari untuk memindahkan model</p>
-                <p><span class="instruction-icon">🎵</span> Tekan tombol play untuk memutar musik</p>
-                <p><span class="instruction-icon">📁</span> Gunakan tombol "Pilih Musik" untuk ganti lagu</p>
+                <p><span class="instruction-icon">🎵</span> Tekan tombol instrumen untuk memainkan suara alat musik</p>
+                <p><span class="instruction-icon">▶️</span> Tekan play untuk memainkan musik latar</p>
+                <p><span class="instruction-icon">📁</span> Gunakan "Pilih Musik" untuk ganti lagu</p>
+                <p><span class="instruction-icon">⛶</span> Tekan tombol layar penuh untuk pengalaman lebih imersif</p>
+                <p><span class="instruction-icon">🔄</span> Ganti mode AR untuk pengalaman berbeda</p>
             </div>
         </div>
 
@@ -423,7 +788,7 @@
             <button class="music-button" id="music-button">
                 <span id="play-icon">▶</span>
             </button>
-            <div class="music-title" id="music-title">Pilih Musik</div>
+            <div class="music-title" id="music-title">Play</div>
             <div class="music-visualizer hidden" id="music-visualizer">
                 <div class="bar"></div>
                 <div class="bar"></div>
@@ -438,7 +803,7 @@
         <!-- Overlay loading -->
         <div class="loading-overlay" id="loading-overlay">
             <div class="loading-spinner"></div>
-            <p>Memuat kamera dan model 3D...</p>
+            <p>Memuat kamera dan studio musik...</p>
         </div>
 
         <!-- Pesan error -->
@@ -451,12 +816,26 @@
             <source src="" type="audio/mpeg">
             Browser Anda tidak mendukung elemen audio.
         </audio>
+
+        <!-- Container untuk audio effects dengan file MP3 default -->
+        <div class="audio-container">
+            <audio id="drum-sound" preload="auto">
+                <source src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/drum.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="piano-sound" preload="auto">
+                <source src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/piano.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="guitar-sound" preload="auto">
+                <source src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/guitar.mp3" type="audio/mpeg">
+            </audio>
+        </div>
     </div>
 
     <script>
         window.addEventListener('load', () => {
             const modelViewer = document.getElementById('ar-model');
             const cameraView = document.getElementById('camera-view');
+            const arEnvironment = document.getElementById('ar-environment');
             const loadingOverlay = document.getElementById('loading-overlay');
             const errorMessage = document.getElementById('error-message');
             const instructionsOverlay = document.getElementById('instructions-overlay');
@@ -474,6 +853,36 @@
             const chooseMusicButton = document.getElementById('choose-music-button');
             const musicFileInput = document.getElementById('music-file-input');
 
+            // Elemen untuk layar penuh
+            const fullscreenButton = document.getElementById('fullscreen-button');
+            const fullscreenIcon = document.getElementById('fullscreen-icon');
+
+            // Elemen untuk mode AR
+            const arToLifeButton = document.getElementById('ar-to-life-button');
+            const lifeToArButton = document.getElementById('life-to-ar-button');
+
+            // Variabel untuk track audio
+            let audioContext;
+            let audioBuffers = {};
+            let isAudioInitialized = false;
+            let currentMode = 'ar-to-life';
+
+            // Konfigurasi file MP3 default untuk setiap instrumen
+            const defaultSounds = {
+                drum: {
+                    element: document.getElementById('drum-sound'),
+                    url: 'https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/sounds/drum.mp3'
+                },
+                piano: {
+                    element: document.getElementById('piano-sound'),
+                    url: 'https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/sounds/piano.mp3'
+                },
+                guitar: {
+                    element: document.getElementById('guitar-sound'),
+                    url: 'https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/sounds/guitar.mp3'
+                }
+            };
+
             // Fungsi untuk mengakses kamera
             async function startCamera() {
                 try {
@@ -485,6 +894,9 @@
                         } 
                     });
                     cameraView.srcObject = stream;
+                    
+                    // Inisialisasi audio setelah user interaction
+                    initializeAudio();
                     
                     // Sembunyikan overlay loading setelah kamera aktif
                     setTimeout(() => {
@@ -506,7 +918,324 @@
                     setTimeout(() => {
                         errorMessage.style.display = 'none';
                     }, 3000);
+                    
+                    // Default ke Life to AR mode jika kamera gagal
+                    setARMode('life-to-ar');
                 }
+            }
+
+            // Inisialisasi Audio Context
+            function initializeAudio() {
+                try {
+                    // Buat Audio Context
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Setup HTML5 Audio dengan file default
+                    setupHTML5Audio();
+                    
+                    isAudioInitialized = true;
+                    console.log("Audio initialized successfully with default MP3 files");
+                    
+                } catch (error) {
+                    console.error("Error initializing audio:", error);
+                    // Fallback ke HTML5 Audio
+                    setupHTML5Audio();
+                }
+            }
+
+            // Setup HTML5 Audio dengan file MP3 default
+            function setupHTML5Audio() {
+                const audioElements = {
+                    drum: document.getElementById('drum-sound'),
+                    piano: document.getElementById('piano-sound'),
+                    guitar: document.getElementById('guitar-sound'),
+                };
+
+                // Set source untuk setiap audio element
+                for (const [instrument, config] of Object.entries(defaultSounds)) {
+                    if (config.element && config.url) {
+                        // Hanya set source jika belum ada
+                        if (!config.element.src || config.element.src === '') {
+                            const source = config.element.querySelector('source');
+                            if (source) {
+                                source.src = config.url;
+                                config.element.load();
+                            }
+                        }
+                    }
+                }
+
+                // Simpan reference ke HTML5 audio elements
+                audioBuffers = audioElements;
+                console.log("HTML5 Audio setup dengan file MP3 default");
+            }
+
+            // Fungsi untuk memainkan suara instrumen
+            function playInstrumentSound(instrument) {
+                if (!isAudioInitialized) {
+                    initializeAudio();
+                }
+
+                try {
+                    // Tambahkan efek visual pada tombol
+                    const button = document.querySelector(`[data-sound="${instrument}"]`);
+                    if (button) {
+                        button.classList.add('playing');
+                        setTimeout(() => {
+                            button.classList.remove('playing');
+                        }, 600);
+                    }
+
+                    // Gunakan HTML5 Audio dengan file MP3 default
+                    playWithHTML5Audio(instrument);
+                    
+                    // Tampilkan feedback visual
+                    showInstrumentFeedback(instrument);
+                    
+                } catch (error) {
+                    console.error("Error playing sound:", error);
+                    // Fallback ke feedback visual saja
+                    showInstrumentFeedback(instrument);
+                }
+            }
+
+            // Play sound menggunakan HTML5 Audio dengan file MP3 default
+            function playWithHTML5Audio(instrument) {
+                const audioElement = audioBuffers[instrument];
+                if (audioElement && typeof audioElement.play === 'function') {
+                    audioElement.currentTime = 0;
+                    audioElement.play().catch(err => {
+                        console.log('HTML5 Audio play failed:', err);
+                        // Fallback ke Web Audio API jika HTML5 gagal
+                        if (audioContext) {
+                            playWithWebAudio(instrument);
+                        }
+                    });
+                } else if (audioContext) {
+                    // Fallback ke Web Audio API
+                    playWithWebAudio(instrument);
+                }
+            }
+
+            // Play sound menggunakan Web Audio API (fallback)
+            function playWithWebAudio(instrument) {
+                const soundConfig = getFallbackSound(instrument);
+                if (!soundConfig) return;
+
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                // Set oscillator type berdasarkan instrumen
+                switch(instrument) {
+                    case 'drum':
+                        oscillator.type = 'sawtooth';
+                        break;
+                    case 'piano':
+                        oscillator.type = 'sine';
+                        break;
+                    case 'guitar':
+                        oscillator.type = 'triangle';
+                        break;
+                    default:
+                        oscillator.type = 'sine';
+                }
+
+                oscillator.frequency.setValueAtTime(soundConfig.frequency, audioContext.currentTime);
+                
+                // Envelope untuk suara yang lebih natural
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + soundConfig.duration);
+
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + soundConfig.duration);
+            }
+
+            // Konfigurasi fallback sounds menggunakan oscillator
+            function getFallbackSound(instrument) {
+                const sounds = {
+                    drum: { frequency: 100, duration: 0.3 },
+                    piano: { frequency: 523.25, duration: 0.8 },
+                    guitar: { frequency: 329.63, duration: 0.6 },
+                };
+                return sounds[instrument];
+            }
+
+            // Fungsi untuk menampilkan feedback visual ketika instrumen dimainkan
+            function showInstrumentFeedback(instrument) {
+                const instrumentNames = {
+                    drum: 'Drum',
+                    piano: 'Piano', 
+                    guitar: 'Gitar',
+                };
+                
+                errorMessage.textContent = `🎵 Memainkan ${instrumentNames[instrument]}!`;
+                errorMessage.style.background = 'rgba(102, 126, 234, 0.7)';
+                errorMessage.style.display = 'block';
+                
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                    errorMessage.style.background = 'rgba(255, 0, 0, 0.7)';
+                }, 1500);
+            }
+
+            // Setup event listeners untuk tombol instrumen
+            function setupInstrumentButtons() {
+                const instrumentButtons = document.querySelectorAll('.instrument-button');
+                
+                instrumentButtons.forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        const soundType = button.getAttribute('data-sound');
+                        if (soundType) {
+                            playInstrumentSound(soundType);
+                        }
+                    });
+                    
+                    // Touch event untuk mobile
+                    button.addEventListener('touchstart', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        const soundType = button.getAttribute('data-sound');
+                        if (soundType) {
+                            playInstrumentSound(soundType);
+                        }
+                    });
+                });
+
+                console.log(`Setup ${instrumentButtons.length} instrument buttons berhasil`);
+            }
+
+            // Fungsi untuk mengelola layar penuh
+            function setupFullscreen() {
+                // Event listener untuk tombol layar penuh
+                fullscreenButton.addEventListener('click', toggleFullscreen);
+                
+                // Event listener untuk perubahan status layar penuh
+                document.addEventListener('fullscreenchange', updateFullscreenIcon);
+                document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+                document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
+                document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
+            }
+
+            // Fungsi untuk toggle layar penuh
+            function toggleFullscreen() {
+                const container = document.querySelector('.ar-container');
+                
+                if (!document.fullscreenElement && 
+                    !document.webkitFullscreenElement && 
+                    !document.mozFullScreenElement && 
+                    !document.msFullscreenElement) {
+                    // Masuk ke mode layar penuh
+                    if (container.requestFullscreen) {
+                        container.requestFullscreen();
+                    } else if (container.webkitRequestFullscreen) {
+                        container.webkitRequestFullscreen();
+                    } else if (container.mozRequestFullScreen) {
+                        container.mozRequestFullScreen();
+                    } else if (container.msRequestFullscreen) {
+                        container.msRequestFullscreen();
+                    }
+                } else {
+                    // Keluar dari mode layar penuh
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
+            }
+
+            // Fungsi untuk memperbarui ikon layar penuh
+            function updateFullscreenIcon() {
+                if (document.fullscreenElement || 
+                    document.webkitFullscreenElement || 
+                    document.mozFullScreenElement || 
+                    document.msFullscreenElement) {
+                    fullscreenIcon.textContent = '⛶';
+                } else {
+                    fullscreenIcon.textContent = '⛶';
+                }
+            }
+
+            // Fungsi untuk mengatur mode AR
+            function setupARMode() {
+                // Mode AR to Life (default)
+                arToLifeButton.addEventListener('click', () => {
+                    setARMode('ar-to-life');
+                });
+
+                // Mode Life to AR
+                lifeToArButton.addEventListener('click', () => {
+                    setARMode('life-to-ar');
+                });
+            }
+
+            // Fungsi untuk mengubah mode AR
+            function setARMode(mode) {
+                currentMode = mode;
+                
+                // Reset semua mode
+                arToLifeButton.classList.remove('active');
+                lifeToArButton.classList.remove('active');
+                arEnvironment.classList.remove('active');
+                cameraView.style.display = 'none';
+                
+                // Atur mode yang dipilih
+                if (mode === 'ar-to-life') {
+                    arToLifeButton.classList.add('active');
+                    // Mode AR to Life: Model AR di atas feed kamera
+                    cameraView.style.display = 'block';
+                    modelViewer.style.background = 'transparent';
+                    modelViewer.style.opacity = '1';
+                    
+                    // Konfigurasi model-viewer untuk AR
+                    modelViewer.setAttribute('environment-image', 'neutral');
+                    modelViewer.setAttribute('shadow-intensity', '1');
+                    modelViewer.setAttribute('exposure', '1');
+                    
+                    errorMessage.textContent = 'Mode AR to Life: Studio musik di dunia nyata';
+                    errorMessage.style.background = 'rgba(102, 126, 234, 0.7)';
+                    errorMessage.style.display = 'block';
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                    }, 3000);
+                    
+                } else if (mode === 'life-to-ar') {
+                    lifeToArButton.classList.add('active');
+                    // Mode Life to AR: Pengguna berada di dalam studio virtual
+                    arEnvironment.classList.add('active');
+                    modelViewer.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)';
+                    modelViewer.style.opacity = '0.9';
+                    
+                    // Konfigurasi model-viewer untuk immersive experience
+                    modelViewer.setAttribute('environment-image', 'legacy');
+                    modelViewer.setAttribute('shadow-intensity', '1.5');
+                    modelViewer.setAttribute('exposure', '0.8');
+                    
+                    // Atur camera position untuk immersive view
+                    setTimeout(() => {
+                        if (modelViewer.camera) {
+                            modelViewer.cameraOrbit = '0deg 75deg 4m';
+                        }
+                    }, 100);
+                    
+                    errorMessage.textContent = 'Mode Life to AR: Anda berada di dalam studio musik virtual!';
+                    errorMessage.style.background = 'rgba(102, 126, 234, 0.7)';
+                    errorMessage.style.display = 'block';
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                    }, 3000);
+                }
+                
+                console.log(`Mode AR diubah ke: ${mode}`);
             }
 
             // Event listener untuk tombol bantuan
@@ -593,10 +1322,31 @@
                 }
             });
 
-            // Tunggu hingga model siap
+            // Setup model viewer
             modelViewer.addEventListener('load', () => {
-                console.log("Model siap.");
+                console.log("Studio musik 3D siap!");
+                setupInstrumentButtons();
+                
+                // Nonaktifkan kontrol pan (geser dua jari)
+                modelViewer.addEventListener('pan', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                });
             });
+
+            // Inisialisasi audio saat user pertama kali berinteraksi
+            document.addEventListener('click', function initializeAudioOnInteraction() {
+                if (!isAudioInitialized) {
+                    initializeAudio();
+                }
+                document.removeEventListener('click', initializeAudioOnInteraction);
+            });
+
+            // Setup layar penuh
+            setupFullscreen();
+
+            // Setup mode AR
+            setupARMode();
 
             // Mulai kamera saat halaman dimuat
             startCamera();
@@ -612,6 +1362,3 @@
     </script>
 </body>
 </html>
-
-
-

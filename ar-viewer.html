@@ -112,6 +112,11 @@
             transform: translateY(0);
         }
 
+        .instrument-button.active {
+            background: rgba(102, 126, 234, 1);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+        }
+
         .instrument-button.playing {
             animation: instrumentPulse 0.6s ease;
             background: rgba(102, 126, 234, 1);
@@ -622,6 +627,7 @@
                 gap: 8px;
                 flex-wrap: wrap;
                 justify-content: center;
+                max-width: 90%;
             }
 
             .music-title {
@@ -652,11 +658,14 @@
             .ar-mode-panel {
                 top: 10px;
                 padding: 8px 10px;
+                max-width: 90%;
             }
 
             .ar-mode-button {
                 padding: 6px 10px;
                 font-size: 11px;
+                flex: 1;
+                text-align: center;
             }
         }
 
@@ -866,6 +875,8 @@
             let audioBuffers = {};
             let isAudioInitialized = false;
             let currentMode = 'ar-to-life';
+            let currentlyPlayingInstrument = null;
+            let instrumentLoopInterval = null;
 
             // Konfigurasi file MP3 default untuk setiap instrumen
             const defaultSounds = {
@@ -977,13 +988,24 @@
                 }
 
                 try {
+                    // Jika instrumen yang sama ditekan lagi, matikan suara
+                    if (currentlyPlayingInstrument === instrument) {
+                        stopInstrumentSound();
+                        return;
+                    }
+
+                    // Hentikan instrumen yang sedang dimainkan sebelumnya
+                    if (currentlyPlayingInstrument) {
+                        stopInstrumentSound();
+                    }
+
+                    // Set instrumen yang sedang dimainkan
+                    currentlyPlayingInstrument = instrument;
+
                     // Tambahkan efek visual pada tombol
                     const button = document.querySelector(`[data-sound="${instrument}"]`);
                     if (button) {
-                        button.classList.add('playing');
-                        setTimeout(() => {
-                            button.classList.remove('playing');
-                        }, 600);
+                        button.classList.add('active');
                     }
 
                     // Gunakan HTML5 Audio dengan file MP3 default
@@ -999,11 +1021,33 @@
                 }
             }
 
+            // Fungsi untuk menghentikan suara instrumen
+            function stopInstrumentSound() {
+                if (currentlyPlayingInstrument) {
+                    // Hentikan audio
+                    const audioElement = audioBuffers[currentlyPlayingInstrument];
+                    if (audioElement) {
+                        audioElement.pause();
+                        audioElement.currentTime = 0;
+                    }
+
+                    // Hapus efek visual pada tombol
+                    const button = document.querySelector(`[data-sound="${currentlyPlayingInstrument}"]`);
+                    if (button) {
+                        button.classList.remove('active');
+                    }
+
+                    // Reset instrumen yang sedang dimainkan
+                    currentlyPlayingInstrument = null;
+                }
+            }
+
             // Play sound menggunakan HTML5 Audio dengan file MP3 default
             function playWithHTML5Audio(instrument) {
                 const audioElement = audioBuffers[instrument];
                 if (audioElement && typeof audioElement.play === 'function') {
                     audioElement.currentTime = 0;
+                    audioElement.loop = true; // Set loop untuk suara yang berkelanjutan
                     audioElement.play().catch(err => {
                         console.log('HTML5 Audio play failed:', err);
                         // Fallback ke Web Audio API jika HTML5 gagal
@@ -1362,4 +1406,3 @@
     </script>
 </body>
 </html>
-

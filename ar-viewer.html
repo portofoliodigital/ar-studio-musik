@@ -17,7 +17,7 @@
             height: 100%;
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            -webkit-user-select: none; /* Mencegah seleksi teks di iOS */
+            -webkit-user-select: none;
             user-select: none;
         }
 
@@ -29,7 +29,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #000; /* Latar belakang hitam untuk fokus */
+            background-color: #000;
         }
 
         /* Video kamera di belakang */
@@ -51,7 +51,7 @@
             z-index: 2;
         }
 
-        /* Overlay instruksi - diperbarui untuk memenuhi layar */
+        /* Overlay instruksi */
         .instructions-overlay {
             position: absolute;
             top: 0;
@@ -72,7 +72,7 @@
 
         .instructions-overlay h3 {
             margin: 0 0 30px 0;
-            font-size: 1.8rem; /* Ukuran font lebih besar */
+            font-size: 1.8rem;
             font-weight: bold;
         }
 
@@ -84,7 +84,7 @@
 
         .instructions-overlay p {
             margin: 20px 0;
-            font-size: 1.2rem; /* Ukuran font lebih besar */
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: flex-start;
@@ -100,7 +100,7 @@
             font-size: 2rem;
         }
 
-        /* Tombol tutup instruksi - diperbarui */
+        /* Tombol tutup instruksi */
         .close-instructions {
             position: absolute;
             top: 20px;
@@ -138,6 +138,130 @@
             align-items: center;
         }
 
+        /* Tombol kontrol musik - DIUBAH */
+        .music-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 40px; /* Diperkecil dari 50px */
+            padding: 10px 20px; /* Diperkecil dari 15px 25px */
+            z-index: 4;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Tombol musik - DIUBAH */
+        .music-button {
+            width: 45px; /* Diperkecil dari 60px */
+            height: 45px; /* Diperkecil dari 60px */
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 18px; /* Diperkecil dari 24px */
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .music-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .music-button:active {
+            transform: scale(0.95);
+        }
+
+        .music-button.playing {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
+        }
+
+        /* Judul musik - DIUBAH */
+        .music-title {
+            color: white;
+            margin-left: 12px; /* Diperkecil dari 15px */
+            font-size: 14px; /* Diperkecil dari 16px */
+            max-width: 150px; /* Diperkecil dari 200px */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Visualizer musik - DIUBAH */
+        .music-visualizer {
+            display: flex;
+            align-items: flex-end;
+            height: 25px; /* Diperkecil dari 30px */
+            margin-left: 12px; /* Diperkecil dari 15px */
+        }
+
+        .bar {
+            width: 3px; /* Diperkecil dari 4px */
+            height: 5px;
+            margin: 0 1.5px; /* Diperkecil dari 0 2px */
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 2px;
+            transition: height 0.3s ease;
+        }
+
+        .bar:nth-child(1) { animation: dance 0.8s infinite alternate; }
+        .bar:nth-child(2) { animation: dance 0.6s infinite alternate; }
+        .bar:nth-child(3) { animation: dance 0.7s infinite alternate; }
+        .bar:nth-child(4) { animation: dance 0.5s infinite alternate; }
+        .bar:nth-child(5) { animation: dance 0.9s infinite alternate; }
+
+        @keyframes dance {
+            0% { height: 5px; }
+            100% { height: 25px; } /* Diperkecil dari 30px */
+        }
+
+        .music-visualizer.hidden {
+            display: none;
+        }
+
+        /* Tombol Pilih Musik - DIUBAH */
+        .choose-music-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 6px 12px; /* Diperkecil dari 8px 15px */
+            border-radius: 18px; /* Diperkecil dari 20px */
+            font-size: 12px; /* Diperkecil dari 14px */
+            cursor: pointer;
+            margin-left: 12px; /* Diperkecil dari 15px */
+            transition: all 0.3s ease;
+        }
+
+        .choose-music-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        #music-file-input {
+            display: none;
+        }
+
         /* Overlay loading */
         .loading-overlay {
             position: absolute;
@@ -161,12 +285,7 @@
             border: 6px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
             margin-bottom: 25px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
 
         /* Pesan error */
@@ -186,7 +305,7 @@
             font-size: 1.1rem;
         }
 
-        /* Media query untuk layar yang lebih kecil */
+        /* Media query untuk layar yang lebih kecil - DIUBAH */
         @media (max-height: 600px) {
             .instructions-overlay h3 {
                 font-size: 1.5rem;
@@ -203,6 +322,45 @@
                 height: 30px;
                 font-size: 1.5rem;
                 margin-right: 10px;
+            }
+            
+            .music-controls {
+                bottom: 20px;
+                padding: 8px 12px; /* Diperkecil dari 10px 15px */
+                flex-wrap: wrap;
+            }
+            
+            .music-button {
+                width: 40px; /* Diperkecil dari 50px */
+                height: 40px; /* Diperkecil dari 50px */
+                font-size: 16px; /* Diperkecil dari 20px */
+            }
+            
+            .music-title {
+                font-size: 12px; /* Diperkecil dari 14px */
+                max-width: 120px; /* Diperkecil dari 150px */
+            }
+
+            .choose-music-button {
+                margin-left: 0;
+                margin-top: 5px;
+                padding: 5px 10px; /* Diperkecil dari 8px 15px */
+                font-size: 11px; /* Diperkecil dari 14px */
+            }
+            
+            .music-visualizer {
+                height: 20px; /* Diperkecil dari 25px */
+                margin-left: 10px; /* Diperkecil dari 12px */
+            }
+            
+            .bar {
+                width: 2px; /* Diperkecil dari 3px */
+                margin: 0 1px; /* Diperkecil dari 0 1.5px */
+            }
+            
+            @keyframes dance {
+                0% { height: 5px; }
+                100% { height: 20px; } /* Diperkecil dari 25px */
             }
         }
 
@@ -248,7 +406,26 @@
                 <p><span class="instruction-icon">👆</span> Sentuh & geser untuk memutar model</p>
                 <p><span class="instruction-icon">🤏</span> Cubit untuk zoom in/out</p>
                 <p><span class="instruction-icon">👋</span> Gunakan dua jari untuk memindahkan model</p>
+                <p><span class="instruction-icon">🎵</span> Tekan tombol play untuk memutar musik</p>
+                <p><span class="instruction-icon">📁</span> Gunakan tombol "Pilih Musik" untuk ganti lagu</p>
             </div>
+        </div>
+
+        <!-- Kontrol musik -->
+        <div class="music-controls">
+            <button class="music-button" id="music-button">
+                <span id="play-icon">▶</span>
+            </button>
+            <div class="music-title" id="music-title">Pilih Musik</div>
+            <div class="music-visualizer hidden" id="music-visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <button class="choose-music-button" id="choose-music-button">Pilih Musik</button>
+            <input type="file" id="music-file-input" accept="audio/*">
         </div>
 
         <!-- Overlay loading -->
@@ -261,6 +438,12 @@
         <div class="error-message" id="error-message">
             <p>Tidak dapat mengakses kamera. Pastikan Anda telah memberikan izin kamera.</p>
         </div>
+
+        <!-- Elemen audio (tersembunyi) -->
+        <audio id="background-music" loop>
+            <source src="" type="audio/mpeg">
+            Browser Anda tidak mendukung elemen audio.
+        </audio>
     </div>
 
     <script>
@@ -272,6 +455,17 @@
             const instructionsOverlay = document.getElementById('instructions-overlay');
             const helpButton = document.getElementById('help-button');
             const closeInstructions = document.getElementById('close-instructions');
+            
+            // Elemen kontrol musik
+            const musicButton = document.getElementById('music-button');
+            const playIcon = document.getElementById('play-icon');
+            const backgroundMusic = document.getElementById('background-music');
+            const musicVisualizer = document.getElementById('music-visualizer');
+            const musicTitle = document.getElementById('music-title');
+            
+            // Elemen untuk memilih musik
+            const chooseMusicButton = document.getElementById('choose-music-button');
+            const musicFileInput = document.getElementById('music-file-input');
 
             // Fungsi untuk mengakses kamera
             async function startCamera() {
@@ -291,10 +485,10 @@
                         // Tampilkan instruksi setelah 2 detik
                         setTimeout(() => {
                             instructionsOverlay.classList.remove('hidden');
-                            // Sembunyikan instruksi otomatis setelah 5 detik
+                            // Sembunyikan instruksi otomatis setelah 7 detik
                             setTimeout(() => {
                                 instructionsOverlay.classList.add('hidden');
-                            }, 5000);
+                            }, 7000);
                         }, 2000);
                     }, 1000);
                 } catch (err) {
@@ -302,7 +496,6 @@
                     loadingOverlay.style.display = 'none';
                     errorMessage.style.display = 'block';
                     
-                    // Sembunyikan pesan error setelah 3 detik
                     setTimeout(() => {
                         errorMessage.style.display = 'none';
                     }, 3000);
@@ -317,6 +510,80 @@
             // Event listener untuk tombol tutup instruksi
             closeInstructions.addEventListener('click', () => {
                 instructionsOverlay.classList.add('hidden');
+            });
+
+            // Event listener untuk tombol pilih musik
+            chooseMusicButton.addEventListener('click', () => {
+                musicFileInput.click();
+            });
+
+            // Event listener untuk perubahan file musik
+            musicFileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const objectURL = URL.createObjectURL(file);
+                    backgroundMusic.src = objectURL;
+                    
+                    // Update judul lagu
+                    musicTitle.textContent = file.name.replace(/\.[^/.]+$/, "");
+                    
+                    // Jika musik sedang diputar, hentikan dulu
+                    if (!backgroundMusic.paused) {
+                        backgroundMusic.pause();
+                        playIcon.textContent = '▶';
+                        musicButton.classList.remove('playing');
+                        musicVisualizer.classList.add('hidden');
+                    }
+                    
+                    // Tampilkan notifikasi sukses
+                    errorMessage.textContent = `Musik "${file.name}" berhasil dimuat. Tekan play untuk mendengarkan.`;
+                    errorMessage.style.background = 'rgba(0, 128, 0, 0.7)';
+                    errorMessage.style.display = 'block';
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                        errorMessage.style.background = 'rgba(255, 0, 0, 0.7)';
+                    }, 3000);
+                }
+            });
+
+            // Event listener untuk tombol musik
+            musicButton.addEventListener('click', () => {
+                // Cek apakah ada sumber musik yang sudah dipilih
+                if (!backgroundMusic.src || backgroundMusic.src === window.location.href) {
+                    errorMessage.textContent = 'Silakan pilih file musik terlebih dahulu dengan tombol "Pilih Musik".';
+                    errorMessage.style.display = 'block';
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                    }, 3000);
+                    return;
+                }
+
+                if (backgroundMusic.paused) {
+                    // Memutar musik
+                    backgroundMusic.play()
+                        .then(() => {
+                            playIcon.textContent = '❚❚';
+                            musicButton.classList.add('playing');
+                            musicVisualizer.classList.remove('hidden');
+                            if (musicTitle.textContent === 'Pilih Musik') {
+                                musicTitle.textContent = 'Memutar...';
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error playing music:', err);
+                            errorMessage.textContent = 'Tidak dapat memutar musik. Pastikan browser Anda mendukung autoplay.';
+                            errorMessage.style.display = 'block';
+                            setTimeout(() => {
+                                errorMessage.style.display = 'none';
+                            }, 3000);
+                        });
+                } else {
+                    // Jeda musik
+                    backgroundMusic.pause();
+                    playIcon.textContent = '▶';
+                    musicButton.classList.remove('playing');
+                    musicVisualizer.classList.add('hidden');
+                }
             });
 
             // Tunggu hingga model siap
@@ -338,4 +605,3 @@
     </script>
 </body>
 </html>
-

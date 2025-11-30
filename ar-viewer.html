@@ -758,7 +758,7 @@
                 <span class="instrument-icon">🥁</span>
                 <span class="instrument-name">Drum</span>
             </button>
-            <button class="instrument-button" data-sound="piano">
+            <button class="instrument-button" data-sound="keyboard">
                 <span class="instrument-icon">🎹</span>
                 <span class="instrument-name">Keyboard</span>
             </button>
@@ -830,8 +830,8 @@
             <audio id="drum-sound" preload="auto">
                 <source src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/drum.mp3" type="audio/mpeg">
             </audio>
-            <audio id="piano-sound" preload="auto">
-                <source src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/piano.mp3" type="audio/mpeg">
+            <audio id="keyboard-sound" preload="auto">
+                <source src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/keyboard.mp3" type="audio/mpeg">
             </audio>
             <audio id="guitar-sound" preload="auto">
                 <source src="https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/guitar.mp3" type="audio/mpeg">
@@ -883,9 +883,9 @@
                     element: document.getElementById('drum-sound'),
                     url: 'https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/drum.mp3'
                 },
-                piano: {
-                    element: document.getElementById('piano-sound'),
-                    url: 'https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/piano.mp3'
+                keyboard: {
+                    element: document.getElementById('keyboard-sound'),
+                    url: 'https://raw.githubusercontent.com/portofoliodigital/ar-studio-musik/main/assets/keyboard.mp3'
                 },
                 guitar: {
                     element: document.getElementById('guitar-sound'),
@@ -957,7 +957,7 @@
             function setupHTML5Audio() {
                 const audioElements = {
                     drum: document.getElementById('drum-sound'),
-                    piano: document.getElementById('piano-sound'),
+                    keyboard: document.getElementById('keyboard-sound'),
                     guitar: document.getElementById('guitar-sound'),
                 };
 
@@ -1076,7 +1076,7 @@
                     case 'drum':
                         oscillator.type = 'sawtooth';
                         break;
-                    case 'piano':
+                    case 'keyboard':
                         oscillator.type = 'sine';
                         break;
                     case 'guitar':
@@ -1100,7 +1100,7 @@
             function getFallbackSound(instrument) {
                 const sounds = {
                     drum: { frequency: 100, duration: 0.3 },
-                    piano: { frequency: 523.25, duration: 0.8 },
+                    keyboard: { frequency: 523.25, duration: 0.8 },
                     guitar: { frequency: 329.63, duration: 0.6 },
                 };
                 return sounds[instrument];
@@ -1110,7 +1110,7 @@
             function showInstrumentFeedback(instrument) {
                 const instrumentNames = {
                     drum: 'Drum',
-                    piano: 'Piano', 
+                    keyboard: 'Keyboard', 
                     guitar: 'Gitar',
                 };
                 
@@ -1405,6 +1405,7 @@
     </script>
 </body>
 </html>
+
 
 
 
